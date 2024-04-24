@@ -4,4 +4,3 @@ deepl
 tiktoken
 PyPDF2
 yt_dlp
-my_yt_tran
