@@ -8,6 +8,7 @@ import os
 from PyPDF2 import PdfReader
 import tiktoken
 import textwrap
+import streamlit as st
 
 # PDF 파일을 요약하는 함수
 def summarize_PDF_file(pdf_file, lang, trans_checked):
