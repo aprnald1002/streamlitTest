@@ -4,3 +4,4 @@ deepl
 tiktoken
 PyPDF2
 yt_dlp
+youtube_transcript_api
