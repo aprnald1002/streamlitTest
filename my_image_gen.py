@@ -1,18 +1,20 @@
 from openai import OpenAI
 import textwrap
+import streamlit as st
+
 # import requests
 # from IPython.display import Image, display
 
 def translate_text_for_image(text):
     client = OpenAI(
-        api_key = "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",
+        api_key = st.secrets["hagunloc"],
     )
 
     user_content = text
     messages = [{"role": "user", "content": user_content}]
     
     response = client.chat.completions.create(
-        model = "gpt-4-turbo-2024-04-09",
+        model = st.secrets["modul"],
         messages = messages,
         max_tokens = 1000,
         temperature = 0.8,
@@ -25,7 +27,7 @@ def translate_text_for_image(text):
 
 def generate_text_for_image(text):
     client = OpenAI(
-        api_key = "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",
+        api_key = st.secrets["hagunloc"],
     )
 
     user_content = text
@@ -33,7 +35,7 @@ def generate_text_for_image(text):
     messages = [{"role": "user", "content": user_content}]
 
     response = client.chat.completions.create(
-        model = "gpt-4-turbo-2024-04-09",
+        model = st.secrets["modul"],
         messages = messages,
         max_tokens = 1000,
         temperature = 0.8,
@@ -46,7 +48,7 @@ def generate_text_for_image(text):
     
 def generate_image_from_text(text_for_image, image_num = 1, image_size = "512x512"):
     client = OpenAI(
-        api_key = "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",
+        api_key = st.secrets["hagunloc"],
     )
 
     shorten_text_for_image = textwrap.shorten(text_for_image, 1000)

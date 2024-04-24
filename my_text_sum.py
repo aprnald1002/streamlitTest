@@ -8,7 +8,7 @@ import tiktoken
 # OpenAI 라이브러리를 이용해 텍스트를 요약하는 함수
 def summarize_text(user_text, lang="en"): # lang 인자에 영어를 기본적으로 지정
     # API 키 설정
-    client = OpenAI(api_key="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")
+    client = OpenAI(api_key=st.secrets["hagunloc"])
 
     # 대화 메시지 정의
     if lang == "en":
@@ -25,7 +25,7 @@ def summarize_text(user_text, lang="en"): # lang 인자에 영어를 기본적�
         
     # Chat Completions API 호출
     response = client.chat.completions.create(
-                            model="gpt-4-turbo-2024-04-09", # 사용할 모델 선택 
+                            model=st.secrets["modul"], # 사용할 모델 선택 
                             messages=messages, # 전달할 메시지 지정
                             max_tokens=2000,  # 응답 최대 토큰 수 지정 
                             temperature=0.3,  # 완성의 다양성을 조절하는 온도 설정
@@ -39,7 +39,7 @@ def summarize_text_final(text_list, lang = 'en'):
     # 리스트를 연결해 하나의 요약 문자열로 통합
     joined_summary = " ".join(text_list) 
 
-    enc = tiktoken.encoding_for_model("gpt-4-turbo-2024-04-09")
+    enc = tiktoken.encoding_for_model(st.secrets["modul"])
     token_num = len(enc.encode(joined_summary)) # 텍스트 문자열의 토큰 개수 구하기
 
     req_max_token = 2000 # 응답을 고려해 설정한 최대 요청 토큰    
@@ -53,7 +53,7 @@ def summarize_text_final(text_list, lang = 'en'):
 # OpenAI 라이브러리를 이용해 영어를 한국어로 번역하는 함수
 def traslate_english_to_korean_using_openAI(text):    
     # API 키 설정
-    client = OpenAI(api_key="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")
+    client = OpenAI(st.secrets["hagunloc"])
 
     # 대화 메시지 정의
     user_content = f"Translate the following English sentences into Korean.\n {text}"
@@ -61,7 +61,7 @@ def traslate_english_to_korean_using_openAI(text):
     
     # Chat Completions API 호출
     response = client.chat.completions.create(
-                            model="gpt-4-turbo-2024-04-09", # 사용할 모델 선택 
+                            model=st.secrets["modul"], # 사용할 모델 선택 
                             messages=messages, # 전달할 메시지 지정
                             max_tokens=2000,  # 응답 최대 토큰 수 지정 
                             temperature=0.3,  # 완성의 다양성을 조절하는 온도 설정
@@ -74,7 +74,7 @@ def traslate_english_to_korean_using_openAI(text):
 
 # DeepL 라이브러리를 이용해 텍스트를 한국어로 번역하는 함수
 def traslate_english_to_korean_using_deepL(text):   
-    auth_key = '7e7111d0-bfd5-4b02-83d7-425ebbfd5589' # Deepl 인증 키
+    auth_key = st.secrets["auth"] # Deepl 인증 키
     translator = deepl.Translator(auth_key) # translator 객체를 생성
 
     result = translator.translate_text(text, target_lang="KO") # 번역 결과 객체를 result 변수에 할당

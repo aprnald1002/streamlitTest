@@ -11,7 +11,7 @@ import textwrap
 import deepl
 
 # 텍스트의 토큰 수를 계산하는 함수(모델: "gpt-3.5-turbo")
-def calc_token_num(text, model="gpt-4-turbo-2024-04-09"):
+def calc_token_num(text, model = st.secrets["modul"]):
     enc = tiktoken.encoding_for_model(model)
     encoded_list = enc.encode(text) # 텍스트 인코딩해 인코딩 리스트 생성
     token_num= len(encoded_list)    # 인코딩 리스트의 길이로 토큰 개수 계산
