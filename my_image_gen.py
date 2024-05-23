@@ -1,64 +1,37 @@
-from openai import OpenAI
-import textwrap
 import streamlit as st
+import openai
 
-# import requests
-# from IPython.display import Image, display
+# OpenAI API 키 설정
+openai.api_key = st.secrets["hagunloc"]
 
-def translate_text_for_image(text):
-    client = OpenAI(
-        api_key = st.secrets["hagunloc"],
-    )
+def generate_story(prompt):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # 최신 모델로 변경
+            messages=[
+                {"role": "system", "content": "You are a creative and imaginative AI."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=500,  # 생성할 텍스트 길이 조절
+            temperature=0.7,  # 텍스트 생성의 창의성 조절
+        )
+        story = response['choices'][0]['message']['content'].strip()
+        return story
+    except Exception as e:
+        st.error(f"오류가 발생했습니다: {e}")
+        return ""
 
-    user_content = text
-    messages = [{"role": "user", "content": user_content}]
-    
-    response = client.chat.completions.create(
-        model = st.secrets["modul"],
-        messages = messages,
-        max_tokens = 1000,
-        temperature = 0.8,
-        n = 1
-    )
+st.title("AI 소설 생성기")
+st.write("키워드를 입력하면 AI가 소설을 생성합니다.")
 
-    assistant_reply = response.choices[0].message.content
+# 키워드 입력 받기
+keywords = st.text_input("키워드를 입력하세요:", "")
 
-    return assistant_reply
-
-def generate_text_for_image(text):
-    client = OpenAI(
-        api_key = st.secrets["hagunloc"],
-    )
-
-    user_content = text
-
-    messages = [{"role": "user", "content": user_content}]
-
-    response = client.chat.completions.create(
-        model = st.secrets["modul"],
-        messages = messages,
-        max_tokens = 1000,
-        temperature = 0.8,
-        n = 1
-    )
-
-    assistant_reply = response.choices[0].message.content
-
-    return assistant_reply
-    
-def generate_image_from_text(text_for_image, image_num = 1, image_size = "512x512"):
-    client = OpenAI(
-        api_key = st.secrets["hagunloc"],
-    )
-
-    shorten_text_for_image = textwrap.shorten(text_for_image, 1000)
-
-    response = client.images.generate(prompt = shorten_text_for_image, n = image_num, size = image_size)
-
-    image_urls = []
-
-    for data in response.data:
-        image_url = data.url
-        image_urls.append(image_url)
-
-    return image_urls
+if st.button("소설 생성"):
+    if keywords:
+        prompt = f"다음 키워드를 기반으로 소설을 작성하세요: {keywords}"
+        story = generate_story(prompt)
+        st.subheader("생성된 소설")
+        st.write(story)
+    else:
+        st.error("키워드를 입력하세요.")

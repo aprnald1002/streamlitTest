@@ -1,18 +1,30 @@
 import streamlit as st
 import openai
+from dotenv import load_dotenv
+import os
+
+# 환경 변수 로드
+load_dotenv()
 
 # OpenAI API 키 설정
 openai.api_key = st.secrets["hagunloc"]
 
 def generate_story(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",  # 또는 "gpt-4"로 변경 가능
-        prompt=prompt,
-        max_tokens=500,  # 생성할 텍스트 길이 조절
-        temperature=0.7,  # 텍스트 생성의 창의성 조절
-    )
-    story = response.choices[0].text.strip()
-    return story
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # 최신 모델로 변경
+            messages=[
+                {"role": "system", "content": "You are a creative and imaginative AI."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=500,  # 생성할 텍스트 길이 조절
+            temperature=0.7,  # 텍스트 생성의 창의성 조절
+        )
+        story = response['choices'][0]['message']['content'].strip()
+        return story
+    except Exception as e:
+        st.error(f"오류가 발생했습니다: {e}")
+        return ""
 
 st.title("AI 소설 생성기")
 st.write("키워드를 입력하면 AI가 소설을 생성합니다.")
