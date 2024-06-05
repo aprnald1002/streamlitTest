@@ -5,4 +5,3 @@ tiktoken
 PyPDF2
 yt-dlp
 youtube-transcript-api
-load_dotenv
