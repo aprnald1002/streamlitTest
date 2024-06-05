@@ -172,11 +172,11 @@ def summarize_youtube_video(video_url, selected_lang, trans_method):
     st.video(video_url, format='video/mp4') # st.video(video_url) 도 동일
 
     # 유튜브 동영상 제목 가져오기
-    _, yt_title, _, _, yt_duration = my_yt_tran.get_youtube_video_info(video_url)
+    _, yt_title, _, _, yt_duration = get_youtube_video_info(video_url)
     st.write(f"[제목] {yt_title}, [길이(분:초)] {yt_duration}") # 제목 및 상영 시간출력
     
     # 유튜브 동영상 자막 가져오기
-    yt_transcript = my_yt_tran.get_transcript_from_youtube(video_url, lang)
+    yt_transcript = get_transcript_from_youtube(video_url, lang)
 
     # 자막 텍스트의 토큰 수 계산
     token_num = calc_token_num(yt_transcript)
@@ -189,11 +189,11 @@ def summarize_youtube_video(video_url, selected_lang, trans_method):
     # 분할 자막의 요약 생성
     summaries = []
     for divided_yt_transcript in divided_yt_transcripts:
-        summary = my_text_sum.summarize_text(divided_yt_transcript, lang) # 텍스트 요약
+        summary = summarize_text(divided_yt_transcript, lang) # 텍스트 요약
         summaries.append(summary)
         
     # 분할 자막의 요약을 다시 요약     
-    _, final_summary = my_text_sum.summarize_text_final(summaries, lang)
+    _, final_summary = summarize_text_final(summaries, lang)
 
     if selected_lang == '영어':
         shorten_num = 200 
@@ -206,9 +206,9 @@ def summarize_youtube_video(video_url, selected_lang, trans_method):
 
     if selected_lang == '영어': 
         if trans_method == 'OpenAI':
-            trans_result = my_text_sum.traslate_english_to_korean_using_openAI(final_summary)
+            trans_result = traslate_english_to_korean_using_openAI(final_summary)
         elif trans_method == 'DeepL':
-            trans_result = my_text_sum.traslate_english_to_korean_using_deepL(final_summary)
+            trans_result = traslate_english_to_korean_using_deepL(final_summary)
 
         shorten_trans_result = textwrap.shorten(trans_result, 120 ,placeholder=' [..이하 생략..]')
         st.write("- 한국어 요약(축약):", shorten_trans_result) # 한국어 번역문 출력 (축약)

@@ -99,10 +99,10 @@ def summarize_PDF_file(pdf_file, lang, trans_checked):
         
         for page in reader.pages:
             page_text = page.extract_text() # 페이지의 텍스트 추출
-            text_summary = my_text_sum.summarize_text(page_text, lang)
+            text_summary = summarize_text(page_text, lang)
             text_summaries.append(text_summary)
             
-        token_num, final_summary = my_text_sum.summarize_text_final(text_summaries, lang)
+        token_num, final_summary = summarize_text_final(text_summaries, lang)
         
         if final_summary != "":
             shorten_final_summary = textwrap.shorten(final_summary, 
@@ -113,7 +113,7 @@ def summarize_PDF_file(pdf_file, lang, trans_checked):
             #st.write("- 최종 요약:", shorten_final_summary) # 최종 요약문 출력
 
             if trans_checked:
-                trans_result = my_text_sum.traslate_english_to_korean_using_openAI(final_summary)
+                trans_result = traslate_english_to_korean_using_openAI(final_summary)
                 shorten_trans_result = textwrap.shorten(trans_result, 
                                                         200, 
                                                         placeholder=' [..이하 생략..]')
