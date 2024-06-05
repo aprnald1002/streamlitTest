@@ -8,7 +8,6 @@ from openai import OpenAI
 import os
 import tiktoken
 import textwrap
-import deepl
 import streamlit as st
 
 # 텍스트의 토큰 수를 계산하는 함수(모델: "gpt-3.5-turbo")
