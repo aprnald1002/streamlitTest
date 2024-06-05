@@ -4,4 +4,3 @@ tiktoken
 PyPDF2
 yt-dlp
 youtube-transcript-api
-my_image_gen
