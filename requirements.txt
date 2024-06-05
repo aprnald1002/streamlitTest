@@ -1,6 +1,7 @@
 openai
 streamlit
+deepl
 tiktoken
 PyPDF2
-yt-dlp
-youtube-transcript-api
+yt_dlp
+youtube_transcript_api

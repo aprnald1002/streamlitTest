@@ -7,7 +7,6 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
 import os
 from pathlib import Path
-import streamlit as st
 
 # 유튜브 비디오 정보를 가져오는 함수
 def get_youtube_video_info(video_url):

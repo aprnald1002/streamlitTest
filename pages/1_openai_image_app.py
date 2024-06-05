@@ -100,8 +100,8 @@ def button_callback():
     st.session_state['download_file_names'] = download_file_names
     st.session_state['images'] = images
 
-# ------------- 메인 화면 구성 --------------------------   
-st.title("인공지능 이미지 생성기")
+# ------------- 사이드바 화면 구성 --------------------------   
+st.title("이미지 생성을 위한 설정 ")
 
 input_text = st.text_input("이미지 생성을 위한 설명을 입력하세요.",
                                     "빌딩이 보이는 호수가 있는 도시의 공원")
@@ -126,6 +126,9 @@ detail_description = st.radio('상세 묘사를 추가하겠습니까?',
 # 기본 버튼: 이미지 생성을 위해 사용
 # clicked = st.sidebar.button('이미지 생성')
 clicked = st.button('이미지 생성', on_click=button_callback)
+
+# ------------- 메인 화면 구성 --------------------------   
+st.title("인공지능 이미지 생성기")
 
 # [이미지 생성] 버튼 혹은 [이미지 파일 다운로드] 버튼 클릭 시 화면 표시 함수 실행    
 if clicked or st.session_state['download_buttons'] == True:

@@ -2,16 +2,16 @@
 # 유튜브 동영상을 요약하고 번역하는 웹 앱
 
 import my_yt_tran  # 유튜브 동영상 정보와 자막을 가져오기 위한 모듈 임포트
-import my_text_sum # 텍스트를 요약하기 위한 모듈
+import my_text_sum as my_text_sum # 텍스트를 요약하기 위한 모듈
 import streamlit as st
 from openai import OpenAI
 import os
 import tiktoken
 import textwrap
-import streamlit as st
+import deepl
 
 # 텍스트의 토큰 수를 계산하는 함수(모델: "gpt-3.5-turbo")
-def calc_token_num(text, model = st.secrets["modul"]):
+def calc_token_num(text, model="gpt-4-turbo-2024-04-09"):
     enc = tiktoken.encoding_for_model(model)
     encoded_list = enc.encode(text) # 텍스트 인코딩해 인코딩 리스트 생성
     token_num= len(encoded_list)    # 인코딩 리스트의 길이로 토큰 개수 계산
