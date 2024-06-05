@@ -6,3 +6,4 @@ PyPDF2
 yt-dlp
 youtube-transcript-api
 load_dotenv
+translate_text_for_image
