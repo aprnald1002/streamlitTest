@@ -1,14 +1,144 @@
 
 # 유튜브 동영상을 요약하고 번역하는 웹 앱
 
-import my_yt_tran  # 유튜브 동영상 정보와 자막을 가져오기 위한 모듈 임포트
-import my_text_sum as my_text_sum # 텍스트를 요약하기 위한 모듈
 import streamlit as st
 from openai import OpenAI
 import os
 import tiktoken
 import textwrap
 import deepl
+
+
+
+import yt_dlp
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api.formatters import TextFormatter
+from pathlib import Path
+
+# OpenAI 라이브러리를 이용해 텍스트를 요약하는 함수
+def summarize_text(user_text, lang="en"): # lang 인자에 영어를 기본적으로 지정
+    # API 키 설정
+    client = OpenAI(api_key=st.secrets["api_key"])
+
+    # 대화 메시지 정의
+    if lang == "en":
+        messages = [ 
+            {"role": "system", "content": "You are a helpful assistant in the summary."},
+            {"role": "user", "content": f"Summarize the following. \n {user_text}"}
+        ]
+    elif lang == "ko":
+        messages = [ 
+            {"role": "system", "content": "You are a helpful assistant in the summary."},
+            {"role": "user", "content": f"다음의 내용을 한국어로 요약해 주세요 \n {user_text}"}
+#             {"role": "user", "content": f"Summarize the following in Korea. \n {user_text}"}
+        ]
+        
+    # Chat Completions API 호출
+    response = client.chat.completions.create(
+                            model="gpt-4-turbo-2024-04-09", # 사용할 모델 선택 
+                            messages=messages, # 전달할 메시지 지정
+                            max_tokens=2000,  # 응답 최대 토큰 수 지정 
+                            temperature=0.3,  # 완성의 다양성을 조절하는 온도 설정
+                            n=1              # 생성할 완성의 개수 지정
+    )     
+    summary = response.choices[0].message.content
+    return summary
+
+# 요약 리스트를 최종적으로 요약하는 함수
+def summarize_text_final(text_list, lang = 'en'):
+    # 리스트를 연결해 하나의 요약 문자열로 통합
+    joined_summary = " ".join(text_list) 
+
+    enc = tiktoken.encoding_for_model("gpt-4-turbo-2024-04-09")
+    token_num = len(enc.encode(joined_summary)) # 텍스트 문자열의 토큰 개수 구하기
+
+    req_max_token = 2000 # 응답을 고려해 설정한 최대 요청 토큰    
+    final_summary = "" # 빈 문자열로 초기화
+    if token_num < req_max_token: # 설정한 토큰보다 작을 때만 실행 가능
+        # 하나로 통합한 요약문을 다시 요약
+        final_summary = summarize_text(joined_summary, lang)
+        
+    return token_num, final_summary
+
+# OpenAI 라이브러리를 이용해 영어를 한국어로 번역하는 함수
+def traslate_english_to_korean_using_openAI(text):    
+    # API 키 설정
+    client = OpenAI(api_key=st.secrets["api_key"])
+
+    # 대화 메시지 정의
+    user_content = f"Translate the following English sentences into Korean.\n {text}"
+    messages = [ {"role": "user", "content": user_content} ]
+    
+    # Chat Completions API 호출
+    response = client.chat.completions.create(
+                            model="gpt-4-turbo-2024-04-09", # 사용할 모델 선택 
+                            messages=messages, # 전달할 메시지 지정
+                            max_tokens=2000,  # 응답 최대 토큰 수 지정 
+                            temperature=0.3,  # 완성의 다양성을 조절하는 온도 설정
+                            n=1               # 생성할 완성의 개수 지정
+    )
+
+    assistant_reply = response.choices[0].message.content # 첫 번째 응답 결과 가져오기
+    
+    return assistant_reply
+
+# DeepL 라이브러리를 이용해 텍스트를 한국어로 번역하는 함수
+def traslate_english_to_korean_using_deepL(text):   
+     # Deepl 인증 키
+    translator = deepl.Translator(st.secrets["auth_key"]) # translator 객체를 생성
+
+    result = translator.translate_text(text, target_lang="KO") # 번역 결과 객체를 result 변수에 할당
+    
+    return result.text
+
+
+
+# 유튜브 비디오 정보를 가져오는 함수
+def get_youtube_video_info(video_url):
+    ydl_opts = {            # 다양한 옵션 지정
+        'noplaylist': True,
+        'quiet': True,
+        'no_warnings': True,
+    }
+    
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        video_info = ydl.extract_info(video_url, download=False) # 비디오 정보 추출
+        video_id = video_info['id']              # 비디오 정보에서 비디오 ID 추출
+        title = video_info['title']              # 비디오 정보에서 제목 추출
+        upload_date = video_info['upload_date']  # 비디오 정보에서 업로드 날짜 추출
+        channel = video_info['channel']          # 비디오 정보에서 채널 이름 추출
+        duration = video_info['duration_string']
+
+    return video_id, title, upload_date, channel, duration
+
+# 유튜브 비디오 URL에서 비디오 ID를 추출하는 함수
+def get_video_id(video_url):
+    video_id = video_url.split('v=')[1][:11]
+    
+    return video_id 
+
+# 유튜브 동영상 자막을 직접 가져오는 함수
+def get_transcript_from_youtube(video_url, lang='en'):
+    # 비디오 URL에서 비디오 ID 추출
+    video_id = get_video_id(video_url)
+
+    # 자막 리스트 가져오기
+    transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+    
+#     print(f"- 유튜브 비디오 ID: {video_id}")    
+#     for transcript in transcript_list:
+#         print(f"- [자막 언어] {transcript.language}, [자막 언어 코드] {transcript.language_code}")
+
+    # 자막 가져오기 (lang)
+    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+
+    text_formatter = TextFormatter() # Text 형식으로 출력 지정
+    text_formatted = text_formatter.format_transcript(transcript)
+    
+    return text_formatted
+
+
+
 
 # 텍스트의 토큰 수를 계산하는 함수(모델: "gpt-3.5-turbo")
 def calc_token_num(text, model="gpt-4-turbo-2024-04-09"):
