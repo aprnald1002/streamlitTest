@@ -2,6 +2,7 @@
 # 텍스트 요약을 위한 모듈
 from openai import OpenAI
 import os
+import deepl
 import tiktoken
 import streamlit as st
 
