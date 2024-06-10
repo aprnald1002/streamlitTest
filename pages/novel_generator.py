@@ -28,7 +28,7 @@ if 'current_novel' not in st.session_state:
     st.session_state['current_novel'] = ""
 
 def main():
-    st.title("소설 생성기")
+    st.title("소설 생성기 및 수정기")
 
     option = st.radio("선택하세요", ["키워드 기반 소설 생성", "문장 기반 소설 생성"])
 
@@ -76,6 +76,18 @@ def main():
                 st.session_state['current_novel'] = modified_novel
             else:
                 st.error("수정할 소설과 지시 사항을 모두 입력해주세요.")
+
+        # 생성된 소설 복사 및 다운로드 버튼
+        st.download_button(
+            label="소설 다운로드",
+            data=st.session_state['current_novel'],
+            file_name="novel.txt",
+            mime="text/plain"
+        )
+
+        # 텍스트 박스에 소설 표시 및 복사 안내
+        st.text_area("소설 내용 (여기서 복사할 수 있습니다):", value=st.session_state['current_novel'], height=200)
+        st.info("위 텍스트 상자에서 소설 내용을 복사하세요.")
     else:
         st.info("소설을 한 번 생성한 이후에 수정할 수 있습니다.")
 
