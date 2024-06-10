@@ -64,18 +64,17 @@ def main():
     # 기존 소설 수정 기능은 소설이 한 번 생성된 후에만 사용 가능
     if st.session_state['novel_generated']:
         st.subheader("기존 소설 수정")
-        novel_input = st.text_area("현재 소설:", value=st.session_state['current_novel'], height=200)
         modification_instruction = st.text_area("수정을 위한 지시 사항을 입력하세요:", "")
         if st.button("소설 수정", key="modify_novel"):
-            if novel_input and modification_instruction:
-                prompt = f"다음 소설을 수정해 주세요:\n\n{novel_input}\n\n지시 사항: {modification_instruction}"
+            if modification_instruction:
+                prompt = f"다음 소설을 수정해 주세요:\n\n{st.session_state['current_novel']}\n\n지시 사항: {modification_instruction}"
                 st.write("소설을 수정하고 있습니다...")
                 modified_novel = generate_text(prompt, max_tokens=3000, temperature=0.7)
                 st.write("수정된 소설:")
                 st.write(modified_novel)
                 st.session_state['current_novel'] = modified_novel
             else:
-                st.error("수정할 소설과 지시 사항을 모두 입력해주세요.")
+                st.error("수정을 위한 지시 사항을 입력해주세요.")
 
         # 생성된 소설 복사 버튼
         if st.button("소설 복사", key="copy_novel"):
