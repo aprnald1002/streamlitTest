@@ -9,7 +9,7 @@ def generate_text(keyword, model="gpt-4-turbo-2024-04-09"):
 
     # 대화 메시지 정의
     messages = [
-        {"role": "user", "content": f"Write a novel based on the keyword: {keyword}."}
+        {"role": "user", "content": f"키워드 '{keyword}'를 기반으로 소설을 써주세요."}
     ]
     
     # Chat Completions API 호출
@@ -26,21 +26,21 @@ def generate_text(keyword, model="gpt-4-turbo-2024-04-09"):
 
 def main():
     # 페이지 제목
-    st.title("Novel Generator")
+    st.title("소설 생성기")
 
     # 사용자로부터 키워드 입력 받기
-    keyword = st.text_input("Enter a keyword to generate a novel:", "")
+    keyword = st.text_input("소설 생성을 위한 키워드를 입력하세요:", "")
 
-    if st.button("Generate Novel"):
+    if st.button("소설 생성"):
         if keyword:
-            st.write("Generating novel based on the keyword...")
+            st.write("키워드를 기반으로 소설을 생성하고 있습니다...")
             # 소설 생성
             novel = generate_text(keyword)
             # 생성된 소설 출력
-            st.write("Generated Novel:")
+            st.write("생성된 소설:")
             st.write(novel)
         else:
-            st.error("Please enter a keyword to generate a novel.")
+            st.error("소설 생성을 위한 키워드를 입력해주세요.")
 
 if __name__ == "__main__":
     main()
