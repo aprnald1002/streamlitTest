@@ -1,6 +1,5 @@
 import streamlit as st
 from openai import OpenAI
-import textwrap
 
 # OpenAI 라이브러리를 이용해 텍스트를 생성하는 함수
 def generate_text(keywords, model="gpt-4-turbo-2024-04-09"):
@@ -12,15 +11,16 @@ def generate_text(keywords, model="gpt-4-turbo-2024-04-09"):
 
     # 대화 메시지 정의
     messages = [
-        {"role": "user", "content": f"다음 키워드들을 기반으로 소설을 써주세요: {keyword_text}."}
+        {"role": "system", "content": "당신은 훌륭한 소설 작가입니다."},
+        {"role": "user", "content": f"다음 키워드들을 기반으로 흥미롭고 창의적인 소설을 작성해 주세요: {keyword_text}."}
     ]
     
     # Chat Completions API 호출
     response = client.chat.completions.create(
                             model=model,          # 사용할 모델 선택 
                             messages=messages,    # 전달할 메시지 지정
-                            max_tokens=1000,      # 응답 최대 토큰 수 지정 
-                            temperature=0.7,      # 완성의 다양성을 조절하는 온도 설정
+                            max_tokens=3000,      # 응답 최대 토큰 수 지정 (늘렸습니다)
+                            temperature=0.5,      # 완성의 다양성을 조절하는 온도 설정 (낮췄습니다)
                             n=1                   # 생성할 완성의 개수 지정
     )
     
