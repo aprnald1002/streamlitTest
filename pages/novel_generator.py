@@ -11,8 +11,8 @@ def generate_text(keywords, model="gpt-4-turbo-2024-04-09"):
 
     # 대화 메시지 정의
     messages = [
-        {"role": "system", "content": "당신은 훌륭한 소설 작가입니다."},
-        {"role": "user", "content": f"다음 키워드들을 기반으로 흥미롭고 창의적인 소설을 작성해 주세요: {keyword_text}."}
+        {"role": "system", "content": "당신은 창의적이고 자유로운 소설 작가입니다."},
+        {"role": "user", "content": f"다음 키워드들을 기반으로 흥미롭고 창의적인 소설을 작성해 주세요: {keyword_text}. 자유롭게 상상력을 발휘해 주세요."}
     ]
     
     # Chat Completions API 호출
@@ -20,7 +20,7 @@ def generate_text(keywords, model="gpt-4-turbo-2024-04-09"):
                             model=model,          # 사용할 모델 선택 
                             messages=messages,    # 전달할 메시지 지정
                             max_tokens=3000,      # 응답 최대 토큰 수 지정 (늘렸습니다)
-                            temperature=0.5,      # 완성의 다양성을 조절하는 온도 설정 (낮췄습니다)
+                            temperature=0.9,      # 완성의 다양성을 조절하는 온도 설정 (높였습니다)
                             n=1                   # 생성할 완성의 개수 지정
     )
     
