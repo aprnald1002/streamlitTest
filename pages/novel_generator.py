@@ -3,13 +3,16 @@ from openai import OpenAI
 import textwrap
 
 # OpenAI 라이브러리를 이용해 텍스트를 생성하는 함수
-def generate_text(keyword, model="gpt-4-turbo-2024-04-09"):
+def generate_text(keywords, model="gpt-4-turbo-2024-04-09"):
     # API 키 설정
     client = OpenAI(api_key=st.secrets["api_key"])
 
+    # 키워드들을 하나의 문자열로 결합
+    keyword_text = ", ".join(keywords)
+
     # 대화 메시지 정의
     messages = [
-        {"role": "user", "content": f"키워드 '{keyword}'를 기반으로 소설을 써주세요."}
+        {"role": "user", "content": f"다음 키워드들을 기반으로 소설을 써주세요: {keyword_text}."}
     ]
     
     # Chat Completions API 호출
@@ -29,13 +32,16 @@ def main():
     st.title("소설 생성기")
 
     # 사용자로부터 키워드 입력 받기
-    keyword = st.text_input("소설 생성을 위한 키워드를 입력하세요:", "")
+    keywords_input = st.text_area("소설 생성을 위한 키워드를 입력하세요 (쉼표로 구분):", "")
 
     if st.button("소설 생성"):
-        if keyword:
+        if keywords_input:
+            # 입력받은 키워드를 리스트로 변환
+            keywords = [keyword.strip() for keyword in keywords_input.split(",")]
+
             st.write("키워드를 기반으로 소설을 생성하고 있습니다...")
             # 소설 생성
-            novel = generate_text(keyword)
+            novel = generate_text(keywords)
             # 생성된 소설 출력
             st.write("생성된 소설:")
             st.write(novel)
