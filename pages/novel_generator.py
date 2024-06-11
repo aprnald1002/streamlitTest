@@ -28,7 +28,7 @@ if 'current_novel' not in st.session_state:
     st.session_state['current_novel'] = ""
 
 def main():
-    st.title("소설 생성기 및 수정기")
+    st.title("소설 생성기")
 
     option = st.radio("선택하세요", ["키워드 기반 소설 생성", "문장 기반 소설 생성"])
 
