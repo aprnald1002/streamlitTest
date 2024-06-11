@@ -76,10 +76,5 @@ def main():
             else:
                 st.error("수정을 위한 지시 사항을 입력해주세요.")
 
-        # 생성된 소설 복사 버튼
-        if st.button("소설 복사", key="copy_novel"):
-            st.text_area("소설 내용 (여기서 복사할 수 있습니다):", value=st.session_state['current_novel'], height=200)
-            st.info("위 텍스트 상자에서 소설 내용을 복사하세요.")
-
 if __name__ == "__main__":
     main()
