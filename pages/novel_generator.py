@@ -77,13 +77,12 @@ def main():
                 st.error("수정을 위한 지시 사항을 입력해주세요.")
 
         # 소설 다운로드 버튼
-        if st.button("소설 다운로드", key="download_novel"):
-            st.download_button(
-                label="다운로드",
-                data=st.session_state['current_novel'],
-                file_name="novel.txt",
-                mime="text/plain"
-            )
+        st.download_button(
+            label="소설 다운로드",
+            data=st.session_state['current_novel'],
+            file_name="novel.txt",
+            mime="text/plain"
+        )
 
 if __name__ == "__main__":
     main()
