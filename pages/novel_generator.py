@@ -1,5 +1,5 @@
 import streamlit as st
-import requests
+from spellchecker import SpellChecker
 from openai import OpenAI
 
 # OpenAI 라이브러리를 이용해 텍스트를 생성하는 함수
@@ -22,18 +22,22 @@ def generate_text(prompt, model="gpt-4-turbo-2024-04-09", max_tokens=3000, tempe
     novel_text = response.choices[0].message.content
     return novel_text
 
-# 네이버 맞춤법 검사기 API를 이용해 텍스트를 수정하는 함수
+# pyspellchecker를 이용해 텍스트의 맞춤법을 검사하고 수정하는 함수
 def correct_spelling(text):
-    url = "https://m.search.naver.com/p/csearch/ocontent/spellchecker.nhn"
-    params = {
-        "q": text,
-        "where": "nexearch",
-        "color_blindness": 0
-    }
-    response = requests.get(url, params=params)
-    data = response.json()
-    corrected_text = data['message']['result']['html']
-    return corrected_text
+    spell = SpellChecker(language='ko')  # 한국어 맞춤법 검사기 설정
+    corrected_text = []
+
+    words = text.split()
+    misspelled = spell.unknown(words)
+
+    for word in words:
+        if word in misspelled:
+            corrected_word = spell.correction(word)
+            corrected_text.append(corrected_word)
+        else:
+            corrected_text.append(word)
+
+    return ' '.join(corrected_text)
 
 # 세션 상태 초기화
 if 'novel_generated' not in st.session_state:
