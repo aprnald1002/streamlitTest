@@ -21,28 +21,6 @@ def generate_text(prompt, model="gpt-4-turbo-2024-04-09", max_tokens=3000, tempe
     novel_text = response.choices[0].message.content
     return novel_text
 
-# OpenAI를 이용해 텍스트의 맞춤법을 검사하고 수정하는 함수
-def correct_spelling(text, model="gpt-4-turbo-2024-04-09", max_tokens=3000, temperature=0.2):
-    client = OpenAI(api_key=st.secrets["api_key"])
-
-    prompt = f"다음 문장의 맞춤법을 검사하고 수정해 주세요:\n\n{text}"
-
-    messages = [
-        {"role": "system", "content": "당신은 한국어 맞춤법 검사기입니다."},
-        {"role": "user", "content": prompt}
-    ]
-
-    response = client.chat.completions.create(
-        model=model,
-        messages=messages,
-        max_tokens=max_tokens,
-        temperature=temperature,
-        n=1
-    )
-
-    corrected_text = response.choices[0].message.content
-    return corrected_text
-
 # 세션 상태 초기화
 if 'novel_generated' not in st.session_state:
     st.session_state['novel_generated'] = False
@@ -62,11 +40,10 @@ def main():
                 prompt = f"다음 키워드들을 기반으로 흥미롭고 창의적인 소설을 작성해 주세요: {', '.join(keywords)}. 자유롭게 상상력을 발휘해 주세요."
                 st.write("키워드를 기반으로 소설을 생성하고 있습니다...")
                 novel = generate_text(prompt)
-                corrected_novel = correct_spelling(novel)
                 st.write("생성된 소설:")
-                st.write(corrected_novel)
+                st.write(novel)
                 st.session_state['novel_generated'] = True
-                st.session_state['current_novel'] = corrected_novel
+                st.session_state['current_novel'] = novel
             else:
                 st.error("소설 생성을 위한 키워드를 입력해주세요.")
 
@@ -77,11 +54,10 @@ def main():
                 prompt = f"다음 문장을 기반으로 흥미롭고 창의적인 소설을 작성해 주세요: {sentence_input}. 자유롭게 상상력을 발휘해 주세요."
                 st.write("문장을 기반으로 소설을 생성하고 있습니다...")
                 novel = generate_text(prompt)
-                corrected_novel = correct_spelling(novel)
                 st.write("생성된 소설:")
-                st.write(corrected_novel)
+                st.write(novel)
                 st.session_state['novel_generated'] = True
-                st.session_state['current_novel'] = corrected_novel
+                st.session_state['current_novel'] = novel
             else:
                 st.error("소설 생성을 위한 문장을 입력해주세요.")
 
@@ -94,10 +70,9 @@ def main():
                 prompt = f"다음 소설을 수정해 주세요:\n\n{st.session_state['current_novel']}\n\n지시 사항: {modification_instruction}"
                 st.write("소설을 수정하고 있습니다...")
                 modified_novel = generate_text(prompt, max_tokens=3000, temperature=0.7)
-                corrected_modified_novel = correct_spelling(modified_novel)
                 st.write("수정된 소설:")
-                st.write(corrected_modified_novel)
-                st.session_state['current_novel'] = corrected_modified_novel
+                st.write(modified_novel)
+                st.session_state['current_novel'] = modified_novel
             else:
                 st.error("수정을 위한 지시 사항을 입력해주세요.")
 
