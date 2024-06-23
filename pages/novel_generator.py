@@ -41,7 +41,6 @@ def main():
                 st.write("키워드를 기반으로 소설을 생성하고 있습니다...")
                 novel = generate_text(prompt)
                 st.write("생성된 소설:")
-                st.write(novel)
                 st.session_state['novel_generated'] = True
                 st.session_state['current_novel'] = novel
             else:
@@ -55,7 +54,6 @@ def main():
                 st.write("문장을 기반으로 소설을 생성하고 있습니다...")
                 novel = generate_text(prompt)
                 st.write("생성된 소설:")
-                st.write(novel)
                 st.session_state['novel_generated'] = True
                 st.session_state['current_novel'] = novel
             else:
@@ -71,7 +69,6 @@ def main():
                 st.write("소설을 수정하고 있습니다...")
                 modified_novel = generate_text(prompt, max_tokens=3000, temperature=0.7)
                 st.write("수정된 소설:")
-                st.write(modified_novel)
                 st.session_state['current_novel'] = modified_novel
             else:
                 st.error("수정을 위한 지시 사항을 입력해주세요.")
