@@ -1,5 +1,4 @@
 import streamlit as st
-from spellchecker import SpellChecker
 from openai import OpenAI
 
 # OpenAI 라이브러리를 이용해 텍스트를 생성하는 함수
@@ -22,22 +21,27 @@ def generate_text(prompt, model="gpt-4-turbo-2024-04-09", max_tokens=3000, tempe
     novel_text = response.choices[0].message.content
     return novel_text
 
-# pyspellchecker를 이용해 텍스트의 맞춤법을 검사하고 수정하는 함수
-def correct_spelling(text):
-    spell = SpellChecker(language='ko')  # 한국어 맞춤법 검사기 설정
-    corrected_text = []
+# OpenAI를 이용해 텍스트의 맞춤법을 검사하고 수정하는 함수
+def correct_spelling(text, model="gpt-4-turbo-2024-04-09", max_tokens=3000, temperature=0.2):
+    client = OpenAI(api_key=st.secrets["api_key"])
 
-    words = text.split()
-    misspelled = spell.unknown(words)
+    prompt = f"다음 문장의 맞춤법을 검사하고 수정해 주세요:\n\n{text}"
 
-    for word in words:
-        if word in misspelled:
-            corrected_word = spell.correction(word)
-            corrected_text.append(corrected_word)
-        else:
-            corrected_text.append(word)
+    messages = [
+        {"role": "system", "content": "당신은 한국어 맞춤법 검사기입니다."},
+        {"role": "user", "content": prompt}
+    ]
 
-    return ' '.join(corrected_text)
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        max_tokens=max_tokens,
+        temperature=temperature,
+        n=1
+    )
+
+    corrected_text = response.choices[0].message.content
+    return corrected_text
 
 # 세션 상태 초기화
 if 'novel_generated' not in st.session_state:
